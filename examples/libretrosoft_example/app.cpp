@@ -12,6 +12,7 @@
 
 #include "libretro-core.h"
 #include "softdraw.h"
+Quad_helper clip;
 
 #define MOUSE_RELATIVE 0 //0 = absolute
 int gmx,gmy; // mouse
@@ -28,6 +29,8 @@ int SUPRON=-1,CTRLON=-1,ALTON=-1,SHIFTON=-1;
 bool show_test_window = true;
 bool show_another_window = false;
 ImVec4 clear_color;
+
+bool softrender1=false;
 
 #include <sys/time.h>
 
@@ -79,6 +82,11 @@ int app_init()
     //io.Fonts->AddFontFromFileTTF("../../extra_fonts/ProggyTiny.ttf", 10.0f);
     //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 
+   clip.x=0;
+   clip.y=0;
+   clip.h=rwidth;
+   clip.w=rheight;
+
    memset(Key_Sate,0,512);
    memset(old_Key_Sate ,0, sizeof(old_Key_Sate));
 
@@ -118,6 +126,13 @@ app_main()
             ImGui::ColorEdit3("clear color", (float*)&clear_color);
             if (ImGui::Button("Test Window")) show_test_window ^= 1;
             if (ImGui::Button("Another Window")) show_another_window ^= 1;
+
+            if(softrender1)ImGui::Text("Segments render");
+	    else        ImGui::Text("Standard render");
+            if (ImGui::Button("Toggle SoftRender")){
+		softrender1^= 1;
+	    } 
+
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         }
 
@@ -144,7 +159,7 @@ app_main()
 
         unsigned int col=(unsigned int)(r<<16 | g<<8 | b| a<<24);
 
-   	fillrect(0,0,rwidth,rheight,col);
+   	fillrect(0,0,rwidth,rheight,col,clip);
 
         ImGui::Render();
 

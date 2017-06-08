@@ -87,9 +87,9 @@ void RenderDrawLists(ImDrawList** const cmd_lists, int cmd_lists_count) {
 						pt[1]=cmd_list->VtxBuffer[idx_buffer[k+1]];
 						pt[2]=cmd_list->VtxBuffer[idx_buffer[k+2]];
 
-
-						triangle(pt[0],pt[1],pt[2],col,myclip);
-
+						if(softrender1)trianglex(pt[0],pt[1],pt[2],col,myclip);
+						else triangle(pt[0],pt[1],pt[2],col,myclip);
+						
 					}
 
 				}
